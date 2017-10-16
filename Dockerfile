@@ -1,15 +1,12 @@
-FROM debian:jessie
+FROM labexperimental/debian:jessie
 
-MAINTAINER librescan@gmail.com
+MAINTAINER LabExperimental <librescan@gmail.com>
 
-ADD ./ /app
+ADD ./ /librescan
 
-WORKDIR /app
+WORKDIR /librescan
 
-RUN apt-get update && \
-    apt-get -y install python3-pip lua5.2 liblua5.2 git-svn libusb-dev python3 python-dev libjpeg-dev libssl-dev libffi-dev libturbojpeg1-dev libyaml-dev && \
-    sh misc/Dependencies.sh && \
-    pip3 install -r src/requirements.txt
+RUN pip3 install -r src/requirements.txt
 
 WORKDIR src/
 
