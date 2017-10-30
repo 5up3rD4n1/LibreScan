@@ -1,6 +1,7 @@
 from gettext import translation
 from bottle import *
 from jinja2 import Environment, FileSystemLoader
+from os import getenv
 
 from services.hocrService import HocrService
 from services.imageService import ImageService

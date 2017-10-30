@@ -2,19 +2,25 @@ FROM labexperimental/debian:jessie
 
 MAINTAINER LabExperimental <librescan@gmail.com>
 
-ADD ./ /librescan
+RUN useradd -r -u 1001 -g librescan librescan
 
-WORKDIR /librescan
+RUN mkdir /app/socks
+
+ADD ./ /home/librescan/librescan
+
+WORKDIR /home/librescan/librescan
 
 RUN pip3 install -r src/requirements.txt
 
 WORKDIR src/
 
-RUN python3 setup.py
+USER librescan
 
 ENV LS_DEV_MODE=False
 
-VOLUME /root/LibreScanProjects
+VOLUME /home/librescan/LibreScanProjects
+
+VOLUME /home/librescan/.librescan
 
 EXPOSE 8080
 

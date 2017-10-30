@@ -2,6 +2,7 @@
 import os
 
 import sys
+import setup
 from web.libreScanWeb import LibreScanWeb
 
 if __name__ == '__main__':
@@ -14,6 +15,7 @@ if __name__ == '__main__':
         os.environ["LS_DEV_MODE"] = "False"
         if len(sys.argv) > 2:
             os.environ["LS_DEV_MODE"] = str(sys.argv[2] == '--dev')
+        setup.run_config()
         app = LibreScanWeb()
         app.run_app()
     else:
