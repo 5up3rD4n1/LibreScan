@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 from api.i18n.PoParser import PoParser
 
 USERHOME = os.environ["HOME"]
-RESOURCESPATH = './configuration'
+RESOURCESPATH = './config'
 LIBRESCANPATH = USERHOME + "/LibreScanProjects"
 LSCONFIGPATH = USERHOME + "/.librescan"
 

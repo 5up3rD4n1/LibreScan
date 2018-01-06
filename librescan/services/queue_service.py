@@ -2,18 +2,17 @@
 from ..patterns import Singleton
 from ..utils import TaskManager
 from ..models import ProjectPhoto
-from .config_service import Config
 from queue import Queue
 import threading
+from librescan.config import config
 
 
 class QueueService(metaclass=Singleton):
 
     def __init__(self, p_worker_threads=2):
-        self.config = Config()
         self.queue = Queue()
         self.worker_threads = p_worker_threads
-        self.task_manager = TaskManager(self.config.project_folder)
+        self.task_manager = TaskManager()
         self.reset_queue()
         for i in range(self.worker_threads):
             t = threading.Thread(target=self.start)
@@ -23,7 +22,7 @@ class QueueService(metaclass=Singleton):
     def start(self):
         while True:
             photos = [self.queue.get(block=True)]
-            print("Processing image: " + photos[0].pic_name)
+            print("Processing image: " + photos[0].id)
             self.task_manager.process(photos)
             self.queue.task_done()
 
@@ -50,10 +49,12 @@ class QueueService(metaclass=Singleton):
         self.wait_process()
 
     def _queue_pic(self, p_picture):
-        working_dir = self.config.project_folder
-        photo = ProjectPhoto(working_dir, p_picture)
+        photo = ProjectPhoto(p_picture, config.project_id)
         self.queue.put(photo)
 
     @staticmethod
     def get_active_threads():
         return threading.active_count()
+
+
+queue_service = QueueService()

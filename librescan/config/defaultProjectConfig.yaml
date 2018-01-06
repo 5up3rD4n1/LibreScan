@@ -5,6 +5,9 @@ camera:
 general-info:
   description: description
   name: name
+  tasks:
+  - scantailor
+  - tesseract
   output-formats:
   - pdfbeads
 scantailor:

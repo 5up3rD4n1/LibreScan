@@ -6,51 +6,49 @@ import subprocess
 import time
 import yaml
 
-from .queueService import QueueService
+from .queue_service import QueueService
 from librescan.models import Project
-from .config_service import Config
+from librescan.config import config
 
 
 class ProjectService:
-    def __init__(self):
-        self.config = Config()
-
     def create(self, p_project):
-        config_folder = self.config.config_folder
-        config_file_path = self.config.config_file_path
-        folder_name = self.get_folder_name(config_file_path)
-        new_project_path = self.get_projects_path(config_file_path) + "/" + folder_name
-        mkdir(new_project_path)
-        mkdir(new_project_path + "/raw")
-        mkdir(new_project_path + "/processed")
+        config_folder = config.config_folder
+        config_file_path = config.config_file_path
+        project_id = self.get_folder_name(config_file_path)
+        config.change_project(project_id)
+
+        mkdir(config.project_folder)
+        mkdir(config.raw_folder())
+        mkdir(config.processed_folder())
 
         # Creates the project config template with default values.
         src = config_folder + "/defaultProjectConfig.yaml"
-        destiny = new_project_path + "/.projectConfig.yaml"
+        destiny = config.project_config_file_path()
 
         system("cp " + src + " " + destiny)
-        system("touch " + new_project_path + "/.pics.ls")
-        system("touch " + new_project_path + "/.toDelete.ls")
+        system("touch " + config.pics_file_path())
+        system("touch " + config.to_delete_pics_file_path())
 
         # Update project configuration
         self.change_config(p_project, destiny)
 
         # Append new project to projects file.
-        p_project.id = folder_name
-        p_project.path = new_project_path
+        p_project.id = project_id
+        p_project.path = config.project_folder
         p_project.creation_date = time.strftime("%x %X")
 
-        self.append_project(self.config.projects_file_path(), p_project)
+        self.append_project(config.projects_file_path(), p_project)
         return p_project
 
     def remove(self, p_id):
-        self.config.change_project(p_id)
-        config_path = self.config.projects_file_path()
+        config.change_project(p_id)
+        config_path = config.projects_file_path()
         data_map = self.get_projects_data(config_path)
         if data_map.get(p_id, False):
             project = Project.parse(p_id, data_map[p_id])
             data_map.pop(p_id)
-            project_path = self.config.project_folder
+            project_path = config.project_folder
             system("rm -rf " + project_path)
 
             f = open(config_path, 'w')
@@ -63,16 +61,16 @@ class ProjectService:
             return project
 
     def load(self, p_id):
-        self.config.change_project(p_id)
-        config_path = self.config.projects_file_path()
+        config.change_project(p_id)
+        config_path = config.projects_file_path()
         data_map = self.get_projects_data(config_path)
 
         if data_map.get(p_id, False):
             queue_service = QueueService()
 
             index = 1
-            processed_path = self.config.processed_folder()
-            contents = self.get_file_contents(self.config.pics_file_path())
+            processed_path = config.processed_folder()
+            contents = self.get_file_contents(config.pics_file_path())
             for c in contents:
                 pic_path = processed_path + c[:-1]
                 if (not f_checker(pic_path + ".tif") or
@@ -86,7 +84,7 @@ class ProjectService:
             return Project.parse(p_id, data_map[p_id])
 
     def get_all(self):
-        config_path = self.config.projects_file_path()
+        config_path = config.projects_file_path()
         f = open(config_path)
         data_map = yaml.safe_load(f)
         f.close()
@@ -126,13 +124,6 @@ class ProjectService:
         f.write(yaml.dump(data_map, default_flow_style=False, allow_unicode=True))
         f.close()
         return folder_name
-
-    @staticmethod
-    def get_projects_path(p_path):
-        f = open(p_path)
-        projects_path = yaml.safe_load(f)['project']['path']
-        f.close()
-        return projects_path
 
     @staticmethod
     def append_project(p_projects_path, p_project):
