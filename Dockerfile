@@ -2,26 +2,29 @@ FROM labexperimental/debian:jessie
 
 MAINTAINER LabExperimental <librescan@gmail.com>
 
-RUN useradd -r -u 1001 -g librescan librescan
 
-RUN mkdir /app/socks
+VOLUME /root/LibreScanProjects
 
-ADD ./ /home/librescan/librescan
-
-WORKDIR /home/librescan/librescan
-
-RUN pip3 install -r src/requirements.txt
-
-WORKDIR src/
-
-USER librescan
-
-ENV LS_DEV_MODE=False
-
-VOLUME /home/librescan/LibreScanProjects
-
-VOLUME /home/librescan/.librescan
+VOLUME /root/.librescan
 
 EXPOSE 8080
 
-CMD ["python3", "main.py", "web"]
+ADD ./ /api
+
+WORKDIR /tmp
+
+RUN python3 -m venv ~/.virtualenvs/librescan && \
+    /bin/bash -c "source ~/.virtualenvs/librescan/bin/activate" && \
+    pip install lupa --install-option='--no-luajit' && \
+    chmod +x /api/misc/docker-entry.sh && \
+    chmod +x /api/misc/chdkptp.sh && \
+    sh /api/misc/chdkptp.sh
+
+WORKDIR /api/librescan
+
+RUN pip install -r requirements.txt && \
+    python setup.py
+
+ENV LS_DEV_MODE=False
+
+ENTRYPOINT ["../misc/docker-entry.sh"]

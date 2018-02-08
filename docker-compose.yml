@@ -8,7 +8,11 @@ services:
     ports:
       - 8080:8080
     volumes:
-      - "~/LibreScanProjects:/home/librescan/LibreScanProjects"
-      - "~/.librescan:/home/librescan/.librescan"
+      - "~/LibreScanProjects:/root/LibreScanProjects"
+      - "~/.librescan:/root/.librescan"
+      - "./librescan:/api/librescan"
     environment:
+      - FLASK_APP
+      - FLASK_DEBUG
       - LS_DEV_MODE
+    command: flask run -h 0.0.0.0 -p 8080
