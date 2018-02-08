@@ -11,6 +11,7 @@ export FLASK_APP=/api/librescan/api/app.py
 export FLASK_DEBUG=1
 ```
 - Correr el contenedor
+
 		$ docker-compose up
 
 Si es la primera vez que se ejecuta es problable que el proceso dure tiempo en levantar ya que necesita descargar images y dependencias.
