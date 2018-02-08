@@ -1,10 +1,17 @@
-src/.idea/
-<<<<<<< HEAD
+
+# Compiled files
 **/__pycache__/
-src/services/main.py
 *.pyc
 *.mo
+
+# Idea IDE files
 .idea/
-=======
-**/__pycache__/
->>>>>>> upstream/master
+
+# Python version files (pyenv)
+.python-version
+
+# Environment variables files
+.envrc
+
+# Node modules
+node_modules/
