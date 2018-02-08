@@ -88,7 +88,7 @@ class ProjectService:
         f = open(config_path)
         data_map = yaml.safe_load(f)
         f.close()
-        return [Project.parse(_id, data_map[_id]) for _id in data_map]
+        return [Project.parse(_id, data_map[_id]) for _id in data_map or []]
 
     @staticmethod
     def get_config(p_id):

@@ -2,26 +2,25 @@ FROM labexperimental/debian:jessie
 
 MAINTAINER LabExperimental <librescan@gmail.com>
 
-RUN useradd -r -u 1001 -g librescan librescan
+ADD ./ /api
 
-RUN mkdir /app/socks
+WORKDIR /tmp
 
-ADD ./ /home/librescan/librescan
+RUN python3 -m venv ~/.virtualenvs/librescan && \
+    /bin/bash -c "source ~/.virtualenvs/librescan/bin/activate" && \
+    pip install lupa --install-option='--no-luajit' && \
+    chmod +x /api/misc/chdkptp.sh && \
+    sh /api/misc/chdkptp.sh
 
-WORKDIR /home/librescan/librescan
+WORKDIR /api/librescan
 
-RUN pip3 install -r src/requirements.txt
-
-WORKDIR src/
-
-USER librescan
+RUN pip install -r requirements.txt && \
+    python setup.py
 
 ENV LS_DEV_MODE=False
 
-VOLUME /home/librescan/LibreScanProjects
+VOLUME /root/LibreScanProjects
 
-VOLUME /home/librescan/.librescan
+VOLUME /root/.librescan
 
 EXPOSE 8080
-
-CMD ["python3", "main.py", "web"]
