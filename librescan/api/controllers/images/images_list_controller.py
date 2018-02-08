@@ -1,5 +1,5 @@
 from flask_restful import Resource, marshal_with
-from librescan.services import ScannerService
+from librescan.services import ScannerService, ImageService
 from librescan.models import ProjectPhoto
 from librescan.config import config
 
@@ -7,6 +7,11 @@ from librescan.config import config
 class ImagesListController(Resource):
     def __init__(self):
         self.scanner_service = ScannerService()
+        self.image_service = ImageService()
+
+    @marshal_with(ProjectPhoto.get_fields())
+    def get(self, _id):
+        return self.image_service.get_all(_id)
 
     @marshal_with(ProjectPhoto.get_fields())
     def post(self, _id):

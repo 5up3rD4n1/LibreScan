@@ -7,7 +7,8 @@ from flask_restful import Api
 from .controllers import (
     ImagesListController,
     ProjectsController,
-    ProjectsListController
+    ProjectsListController,
+    OutputsListController
 )
 
 app = Flask(__name__)
@@ -19,3 +20,4 @@ from .controllers.images import images_controller
 api.add_resource(ProjectsListController, '/projects')
 api.add_resource(ProjectsController, '/projects/<string:_id>')
 api.add_resource(ImagesListController, '/projects/<string:_id>/images')
+api.add_resource(OutputsListController, '/projects/<string:_id>/outputs')

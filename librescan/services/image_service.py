@@ -2,6 +2,7 @@ from jpegtran import JPEGImage
 import os
 
 from librescan.config import config
+from librescan.models import ProjectPhoto
 
 
 class ImageService:
@@ -26,3 +27,19 @@ class ImageService:
         image = JPEGImage(path)
         image = image.downscale(height, width)
         return image.as_blob()
+
+    @classmethod
+    def get_all(cls, p_project_id):
+        config.change_project(p_project_id)
+        contents = cls.__file_content()
+        return [ProjectPhoto(image_id.rstrip(), p_project_id) for image_id in contents]
+
+    @staticmethod
+    # NOTE: There are many of this functions all over the project
+    # TODO: extract this to a file service or something similar
+    def __file_content():
+        pics_file = config.pics_file_path()
+        f = open(pics_file, "r")
+        contents = f.readlines()
+        f.close()
+        return contents

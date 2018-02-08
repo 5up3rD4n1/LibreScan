@@ -12,3 +12,6 @@
 
 # Environment variables files
 .envrc
+
+# Node modules
+node_modules/
