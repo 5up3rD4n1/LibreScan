@@ -1,6 +1,6 @@
 email-receiver: librescan@gmail.com
 project:
-  path: /home/sd/LibreScanProjects
+  path: ~/LibreScanProjects
   last-id: 1
 
 
