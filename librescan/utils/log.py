@@ -7,9 +7,10 @@ class Log:
         homedir = os.path.expanduser('~')
         logging.basicConfig(filename=homedir + '/.librescan/librescan.log',
                             format='%(asctime) - s %(levelname)s:%(message)s', level=logging.DEBUG)
+        self.log = logging
 
-    def log_error(self, p_message):
-        logging.error(p_message)
+    def debug(self, p_message):
+        self.log.debug(p_message)
 
 # logger types
 # logging.debug('debug message')

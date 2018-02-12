@@ -4,7 +4,7 @@ import os
 import yaml
 from shutil import copyfile
 from setuptools import setup, find_packages
-from api.i18n.PoParser import PoParser
+# from api.i18n.PoParser import PoParser
 
 USERHOME = os.environ["HOME"]
 RESOURCESPATH = './config'
@@ -57,7 +57,7 @@ def run_config():
     print("INFO: Running initial config")
     create_folders()
     create_config_files()
-    PoParser.compile_po_files()
+    # PoParser.compile_po_files()
     print("INFO: Initial config finished")
 
 

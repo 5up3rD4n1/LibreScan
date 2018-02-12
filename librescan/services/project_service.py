@@ -9,6 +9,7 @@ import yaml
 from .queue_service import QueueService
 from librescan.models import Project
 from librescan.config import config
+from librescan.utils import Log
 
 
 class ProjectService:
@@ -65,7 +66,7 @@ class ProjectService:
         config_path = config.projects_file_path()
         data_map = self.get_projects_data(config_path)
 
-        if data_map.get(p_id, False):
+        if data_map and data_map.get(p_id, False):
             queue_service = QueueService()
 
             index = 1

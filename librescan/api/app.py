@@ -4,6 +4,7 @@
 
 from flask import Flask
 from flask_restful import Api
+from flask_socketio import SocketIO
 from .controllers import (
     ImagesListController,
     ProjectsController,
@@ -17,7 +18,18 @@ api = Api(app)
 # Import individual image and thumbnail route
 from .controllers.images import images_controller
 
-api.add_resource(ProjectsListController, '/projects')
-api.add_resource(ProjectsController, '/projects/<string:_id>')
-api.add_resource(ImagesListController, '/projects/<string:_id>/images')
-api.add_resource(OutputsListController, '/projects/<string:_id>/outputs')
+
+@app.after_request
+def apply_caching(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
+
+
+api.add_resource(ProjectsListController, '/api/projects')
+api.add_resource(ProjectsController, '/api/projects/<string:_id>')
+api.add_resource(ImagesListController, '/api/projects/<string:_id>/images')
+api.add_resource(OutputsListController, '/api/projects/<string:_id>/outputs')
+
+# Initialize sockets io support
+socketio = SocketIO(app)
+

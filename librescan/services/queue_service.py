@@ -24,6 +24,7 @@ class QueueService(metaclass=Singleton):
             photos = [self.queue.get(block=True)]
             print("Processing image: " + photos[0].id)
             self.task_manager.process(photos)
+            print("Task Finished", photos)
             self.queue.task_done()
 
     def push(self, p_image_list):

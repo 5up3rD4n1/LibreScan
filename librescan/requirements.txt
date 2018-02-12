@@ -2,6 +2,7 @@ bottle==0.12.9
 cffi==1.8.3
 click==6.7
 Flask==0.12.2
+Flask-SocketIO==2.9.3
 Flask-RESTful==0.3.6
 itsdangerous==0.24
 Jinja2==2.8
