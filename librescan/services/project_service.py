@@ -9,7 +9,7 @@ import yaml
 from .queue_service import QueueService
 from librescan.models import Project
 from librescan.config import config
-from librescan.utils import Log
+from librescan.utils import logger
 
 
 class ProjectService:
@@ -79,7 +79,7 @@ class ProjectService:
                     if (not f_checker(processed_path + "rlsp" + str(index).zfill(5) + ".tif") or
                             not f_checker(processed_path + "rlsp" + str(index).zfill(5) + ".hocr")):
                         queue_service.push([c[:-1]])
-                        print("Pushing " + c[:-1])
+                        logger.info("Pushing " + c[:-1])
                 index += 1
 
             return Project.parse(p_id, data_map[p_id])

@@ -6,6 +6,7 @@ import yaml
 from models.cameraConfig import CameraConfig
 from utils.camera.impl.chdkptpPT import ChdkptpPT
 from jpegtran import JPEGImage
+from librescan.utils import logger
 
 
 # TODO: Change all the paths with Config class
@@ -26,7 +27,7 @@ class ScannerService:
         f.close()
         return CameraConfig(data_map["zoom"], data_map["iso"])
 
-    def take_pictures(self):
+    def take_pictures(self, p_index):
         try:
             pic_names = []
             save_path = self.working_dir + '/raw/'
@@ -36,15 +37,15 @@ class ScannerService:
             self.pic_number += 1
             pic_names.append("lsp" + str(self.pic_number).zfill(5))
             self.cam_driver.shoot(save_path, pic_names)
-            self.insert_pics_to_file(-1, pic_names)
+            self.insert_pics_to_file(p_index, pic_names)
             self.update_last_pic_number(self.pic_number)
-        except:
-            print("Exception while taking pictures.")
+        except Exception as err:
+            logger.error("Exception while taking pictures." + str(err))
             return -1
         try:
             self.rotate_photos(pic_names[0], pic_names[1])
-        except:
-            print("Exception while rotating pictures.")
+        except Exception as err:
+            logger.error("Exception while rotating pictures." + str(err))
             return -1
         return pic_names
 
@@ -55,6 +56,8 @@ class ScannerService:
     def rotate_photos(self, p_left_photo, p_right_photo):
         pictures_found = False
         tries = 0
+        # NOTE: This can be replaced to use a file watch dog over the file system
+        # then use the web socket to notify
         while not pictures_found:
             try:
                 save_path = self.working_dir + '/raw/'
@@ -65,8 +68,8 @@ class ScannerService:
                 left.rotate(270).save(save_path + p_left_photo + ".jpg")
                 right.rotate(90).save(save_path + p_right_photo + ".jpg")
                 pictures_found = True
-            except:
-                print('Pictures not found yet')
+            except Exception as err:
+                logger.error('Pictures not found yet' + str(err))
                 time.sleep(0.5)
                 if tries > 20:
                     raise Exception
@@ -103,10 +106,10 @@ class ScannerService:
         f.close()
 
         if p_index == -1:
-            p_index = len(contents) - 1
+            p_index = len(contents)
 
         for pic in pic_list:
-            contents.insert(p_index + 1, pic + '\n')
+            contents.insert(p_index, pic + '\n')
             p_index += 1
 
         f = open(pics_file, "w")

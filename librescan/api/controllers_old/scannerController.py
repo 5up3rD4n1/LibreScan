@@ -1,6 +1,6 @@
 import sys
 from bottle import HTTPResponse
-from utils.log import Log
+from librescan.utils import logger
 from jpegtran import JPEGImage
 
 
@@ -41,8 +41,7 @@ class ScannerController:
             self.scanner_service.prepare_cams()
         except:
             print("Unexpected error:", sys.exc_info()[0])
-            log = Log()
-            log.log_error('Error in the method set_new_project_config')
+            log.debug('Error in the method set_new_project_config')
             return {'status': -1}
         return {'status': 1}
 

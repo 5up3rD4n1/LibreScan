@@ -1,6 +1,7 @@
 bottle==0.12.9
 cffi==1.8.3
 click==6.7
+eventlet==0.22.1
 Flask==0.12.2
 Flask-SocketIO==2.9.3
 Flask-RESTful==0.3.6

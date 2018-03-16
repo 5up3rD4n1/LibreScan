@@ -1,20 +1,26 @@
+import sys
 import logging
-import os.path
+import logging.config
+from librescan.config import config
 
 
-class Log:
-    def __init__(self):
-        homedir = os.path.expanduser('~')
-        logging.basicConfig(filename=homedir + '/.librescan/librescan.log',
-                            format='%(asctime) - s %(levelname)s:%(message)s', level=logging.DEBUG)
-        self.log = logging
+def get_logger():
+    format_string = '%(asctime) - s %(levelname)s %(message)s'
+    ls_logger = logging.getLogger('librescan')
 
-    def debug(self, p_message):
-        self.log.debug(p_message)
+    if ls_logger.hasHandlers():
+        ls_logger.handlers.clear()
 
-# logger types
-# logging.debug('debug message')
-# logging.info('info message')
-# logging.warn('warn message')
-# logging.error('error message')
-# logging.critical('critical message')
+    ls_logger.setLevel(logging.DEBUG)
+    console_handler = logging.StreamHandler(sys.stdout)
+    file_handler = logging.FileHandler(filename=config.get_config_folder() + '/librescan.log', encoding='UTF-8')
+
+    formatter = logging.Formatter(fmt=format_string)
+    console_handler.setFormatter(formatter)
+    file_handler.setFormatter(formatter)
+    ls_logger.addHandler(console_handler)
+    ls_logger.addHandler(file_handler)
+    return ls_logger
+
+
+logger = get_logger()

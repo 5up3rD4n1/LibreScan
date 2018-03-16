@@ -1,3 +1,3 @@
 from .camera import *
 from .task import *
-from .log import Log
+from .log import logger
