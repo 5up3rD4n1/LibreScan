@@ -1,6 +1,8 @@
 from jpegtran import JPEGImage
 import os
 
+from PIL import Image
+
 from librescan.config import config
 from librescan.models import ProjectPhoto
 
@@ -27,6 +29,17 @@ class ImageService:
         image = JPEGImage(path)
         image = image.downscale(height, width)
         return image.as_blob()
+
+    @staticmethod
+    def tif(p_project_id, p_image_id, height, width):
+        config.change_project(p_project_id)
+        path = f'{config.processed_folder()}/{p_image_id}.tif'
+        output_path = f'{config.processed_folder()}/{p_image_id}.jpg'
+        im = Image.open(path)
+        im.save(output_path, 'JPEG', quality=100)
+        jpg_image = JPEGImage(output_path)
+        jpg_image = jpg_image.downscale(height, width)
+        return jpg_image.as_blob()
 
     @classmethod
     def get_all(cls, p_project_id):

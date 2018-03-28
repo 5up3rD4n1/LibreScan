@@ -1,10 +1,10 @@
-from ..patterns import Singleton
-from ..utils import TaskManager
-from ..models import ProjectPhoto
-from queue import Queue
 import threading
+from ..patterns import Singleton
+from queue import Queue
+from librescan.models import ProjectPhoto
 from librescan.config import config
-from librescan.utils import logger
+from librescan.utils import TaskManager, logger
+from librescan.utils.notification import NotificationManager
 
 
 class QueueService(metaclass=Singleton):
@@ -13,6 +13,7 @@ class QueueService(metaclass=Singleton):
         self.queue = Queue()
         self.worker_threads = p_worker_threads
         self.task_manager = TaskManager()
+        self.notification_manager = NotificationManager()
         self.reset_queue()
         for i in range(self.worker_threads):
             t = threading.Thread(target=self.start)
@@ -24,7 +25,7 @@ class QueueService(metaclass=Singleton):
             photos = [self.queue.get(block=True)]
             logger.info("Processing image: " + photos[0].id)
             self.task_manager.process(photos)
-            logger.info("Finished processing image " + photos[0].id)
+            self.notification_manager.notify_image_processed(photos[0])
             self.queue.task_done()
 
     def push(self, p_image_list):
