@@ -1,13 +1,13 @@
-from os import getenv
-from patterns.singleton import Singleton
+from librescan.patterns import Singleton
 from threading import Thread
-from utils.output.impl.pdfBeads import PDFBeads
-from utils.output.outputPreparer import OutputPreparer
+from librescan.utils.output.impl.pdfBeads import PDFBeads
+from librescan.utils.output.outputPreparer import OutputPreparer
+from librescan.config import config
 
 
 class OutputService(metaclass=Singleton):
 
-    def __init__(self, p_output_name="Out"):
+    def __init__(self, p_output_name="out"):
         self.working_dir = None
         self.output_name = p_output_name
         self.output_preparer = OutputPreparer()
@@ -15,8 +15,8 @@ class OutputService(metaclass=Singleton):
         self.generators = []
 
     def generate(self):
-        self.working_dir = getenv("LS_PROJECT_PATH")
-        self.output_preparer.run()
+        self.working_dir = config.project_folder
+        self.output_preparer.run(self.working_dir)
         for output_maker in self.output_makers:
             t = Thread(target=output_maker.make, args=(self.working_dir, self.output_name))
             t.setDaemon(True)

@@ -35,7 +35,7 @@ class OutputPreparer:
                         rename(pic_name + ".tif", new_pic_name + ".tif")
                         pic_number += 1
 
-    def run(self):
-        self.working_dir = getenv("LS_PROJECT_PATH")
+    def run(self, p_working_dir):
+        self.working_dir = p_working_dir
         self._delete_pics()
         self._rename_pics()

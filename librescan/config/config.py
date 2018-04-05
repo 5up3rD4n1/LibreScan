@@ -12,6 +12,7 @@ LS_DELETE_PICS_FILE = '/.toDelete.ls'
 LS_PROCESSED_PATH = '/processed'
 LS_PICS_FILE = '/.pics.ls'
 LS_RAW_PATH = '/raw'
+LS_OUTPUT_NAME='out'
 
 LS_SOURCE_PATH = path.dirname(path.dirname(path.realpath(__file__)))
 
@@ -26,6 +27,7 @@ class Config(metaclass=Singleton):
         self.config_file_path = LS_CONFIG_FILE
         self.projects_path = self.get_projects_path()
         self.project_folder = f'{self.projects_path}/{self.project_id}'
+        self.output_name = LS_OUTPUT_NAME
 
     def change_project(self, p_id):
         self.project_id = p_id

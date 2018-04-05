@@ -1,4 +1,5 @@
 from os import getenv
+from .output_service import OutputService
 from .project_service import ProjectService
 from .image_service import ImageService
 from .queue_service import queue_service

@@ -12,11 +12,11 @@ general-info:
   - pdfbeads
 scantailor:
   color-mode: black_and_white
-  despeckle: off
   dewarping: auto
+  despeckle: cautious
   dpi-x: 300
   dpi-y: 300
-  l: 1.5
+  layout: 1.5
   margins-bottom: 2.5
   margins-left: 2.5
   margins-right: 2.5

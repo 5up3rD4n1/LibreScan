@@ -99,6 +99,7 @@ class ProjectService:
     def change_config(p_project, p_config_path):
         f = open(p_config_path)
         data_map = yaml.safe_load(f)
+        logger.info(data_map)
         f.close()
         if p_project.cam_config is not None:
             data_map['camera']['zoom'] = p_project.cam_config.zoom

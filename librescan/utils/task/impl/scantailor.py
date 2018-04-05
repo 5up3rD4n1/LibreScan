@@ -1,5 +1,6 @@
 import subprocess
 from ..task import Task
+from librescan.utils.log import logger
 
 
 class Scantailor(Task):
@@ -11,7 +12,9 @@ class Scantailor(Task):
     def generate_base_command(self):
         command = "scantailor-cli"
         for param in self.config_params:
-            command += " -" + param + "=" + str(self.config_params[param])
+            command += " --" + param + "=" + str(self.config_params[param])
+
+        logger.info(command)
         return command
 
     # Generates the command to be executed, concatenating the photo and input-output paths.
