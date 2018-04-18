@@ -1,9 +1,9 @@
 from jpegtran import JPEGImage
 from os import listdir
 from os import remove
-from os import path
 from shutil import copyfile
 import time
+import random
 import yaml
 
 from librescan.models import CameraConfig
@@ -20,50 +20,58 @@ class DevScannerService:
     def set_camera_config(self):
         self.camera_config = self.get_configuration()
 
-    def get_configuration(self):
+    @staticmethod
+    def get_configuration():
         f = open(config.projects_file_path())
         data_map = yaml.safe_load(f)["camera"]
         f.close()
         return CameraConfig(data_map["zoom"], data_map["iso"])
 
-    def take_pictures(self, p_index):
+    def take_pictures(self, p_index, p_image_ids=None):
         try:
-            pic_names = []
             dev_pics_index = []
             save_path = config.raw_folder() + '/'
-            pic_number = self.get_last_pic_number()
 
-            dev_pics_index.append(pic_number % len(self.dev_pics))
-            pic_number += 1
-            pic_names.append("lsp" + str(pic_number).zfill(5))
-            dev_pics_index.append(pic_number % len(self.dev_pics))
-            pic_number += 1
-            pic_names.append("lsp" + str(pic_number).zfill(5))
+            if not p_image_ids:
+                p_image_ids = []
+                pic_number = self.get_last_pic_number()
+                dev_pics_index.append(pic_number % len(self.dev_pics))
+                pic_number += 1
+                p_image_ids.append("lsp" + str(pic_number).zfill(5))
+                dev_pics_index.append(pic_number % len(self.dev_pics))
+                pic_number += 1
+                p_image_ids.append("lsp" + str(pic_number).zfill(5))
+                self.insert_pics_to_file(p_index, p_image_ids)
+                self.update_last_pic_number(pic_number)
+            else:  # In case of retake, take any picture from the dev pics
+                dev_pics_index.append(random.choice(range(len(self.dev_pics))))
+                dev_pics_index.append(random.choice(range(len(self.dev_pics))))
 
             # Copy development pics (/resources/devModePics) in the raw dir.
             dev_pic = LS_DEV_PICS_PATH + '/' + self.dev_pics[dev_pics_index[0]]
-            dest_path = save_path + pic_names[0] + ".jpg"
+            dest_path = save_path + p_image_ids[0] + ".jpg"
             copyfile(dev_pic, dest_path)
             dev_pic = LS_DEV_PICS_PATH + '/' + self.dev_pics[dev_pics_index[1]]
-            dest_path = save_path + pic_names[1] + ".jpg"
+            dest_path = save_path + p_image_ids[1] + ".jpg"
             copyfile(dev_pic, dest_path)
-            self.insert_pics_to_file(p_index, pic_names)
-            self.update_last_pic_number(pic_number)
+
         except Exception as err:
             logger.error("Exception while taking pictures." + str(err))
             return -1
         try:
-            self.rotate_photos(pic_names[0], pic_names[1])
+            self.rotate_photos(p_image_ids[0], p_image_ids[1])
         except Exception as err:
             logger.error("Exception while rotating pictures." + str(err))
             return -1
-        queue_service.push(pic_names)
-        return pic_names
+        queue_service.push(p_image_ids)
+        return p_image_ids
 
-    def prepare_cams(self):
+    @staticmethod
+    def prepare_cams():
         logger.info("Preparing cameras...")
 
-    def rotate_photos(self, p_left_photo, p_right_photo):
+    @staticmethod
+    def rotate_photos(p_left_photo, p_right_photo):
         pictures_found = False
         tries = 0
         while not pictures_found:
@@ -83,7 +91,8 @@ class DevScannerService:
                     raise Exception
             tries += 1
 
-    def delete_photos(self, p_photo_list):
+    @staticmethod
+    def delete_photos(p_photo_list):
         pics_file = config.pics_file_path()
         f = open(pics_file, "r")
         contents = f.readlines()
@@ -106,7 +115,8 @@ class DevScannerService:
                 allow_unicode=True))
         f.close()
 
-    def insert_pics_to_file(self, p_index, pic_list):
+    @staticmethod
+    def insert_pics_to_file(p_index, pic_list):
         pics_file = config.pics_file_path()
         f = open(pics_file, "r")
         contents = f.readlines()
@@ -123,7 +133,8 @@ class DevScannerService:
         f.writelines(contents)
         f.close()
 
-    def get_last_photo_names(self):
+    @staticmethod
+    def get_last_photo_names():
         pics_file = config.pics_file_path()
         f = open(pics_file, "r")
         contents = f.readlines()
@@ -134,7 +145,8 @@ class DevScannerService:
             last_pics = contents[-2:]
         return last_pics
 
-    def recalibrate(self):
+    @staticmethod
+    def recalibrate():
         logger.info("Recalibrating cameras....")
         return 1
 

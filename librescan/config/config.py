@@ -11,6 +11,7 @@ LS_PROJECT_CONFIG_FILE = '/.projectConfig.yaml'
 LS_DELETE_PICS_FILE = '/.toDelete.ls'
 LS_PROCESSED_PATH = '/processed'
 LS_PICS_FILE = '/.pics.ls'
+LS_PICS_YAML_FILE = '/.pics.yaml'
 LS_RAW_PATH = '/raw'
 LS_OUTPUT_NAME='out'
 
@@ -41,6 +42,9 @@ class Config(metaclass=Singleton):
 
     def pics_file_path(self):
         return f'{self.project_folder}{LS_PICS_FILE}'
+
+    def pics_yaml_path(self):
+        return f'{self.project_folder}{LS_PICS_YAML_FILE}'
 
     def to_delete_pics_file_path(self):
         return f'{self.project_folder}{LS_DELETE_PICS_FILE}'

@@ -5,6 +5,10 @@ from PIL import Image
 
 from librescan.config import config
 from librescan.models import ProjectPhoto
+from librescan.utils import (
+    dict_from_yaml,
+    write_dict
+)
 
 
 class ImageService:
@@ -56,3 +60,13 @@ class ImageService:
         contents = f.readlines()
         f.close()
         return contents
+
+    @staticmethod
+    def append_image_to_yaml(p_image):
+        yaml_path = config.pics_yaml_path()
+        data_map = dict_from_yaml(yaml_path)
+        data_map[p_image.id] = p_image.to_dict()
+        write_dict(yaml_path)
+
+
+

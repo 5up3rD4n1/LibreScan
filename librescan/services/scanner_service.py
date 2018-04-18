@@ -27,27 +27,30 @@ class ScannerService:
         f.close()
         return CameraConfig(data_map["zoom"], data_map["iso"])
 
-    def take_pictures(self, p_index):
+    def take_pictures(self, p_index, p_image_ids=None):
         try:
-            pic_names = []
             save_path = self.working_dir + '/raw/'
 
-            self.pic_number += 1
-            pic_names.append("lsp" + str(self.pic_number).zfill(5))
-            self.pic_number += 1
-            pic_names.append("lsp" + str(self.pic_number).zfill(5))
-            self.cam_driver.shoot(save_path, pic_names)
-            self.insert_pics_to_file(p_index, pic_names)
-            self.update_last_pic_number(self.pic_number)
+            if not p_image_ids:
+                p_image_ids = []
+                self.pic_number += 1
+                p_image_ids.append("lsp" + str(self.pic_number).zfill(5))
+                self.pic_number += 1
+                p_image_ids.append("lsp" + str(self.pic_number).zfill(5))
+                self.cam_driver.shoot(save_path, p_image_ids)
+                self.insert_pics_to_file(p_index, p_image_ids)
+                self.update_last_pic_number(self.pic_number)
+            else:
+                self.cam_driver.shoot(save_path, p_image_ids)
         except Exception as err:
             logger.error("Exception while taking pictures." + str(err))
             return -1
         try:
-            self.rotate_photos(pic_names[0], pic_names[1])
+            self.rotate_photos(p_image_ids[0], p_image_ids[1])
         except Exception as err:
             logger.error("Exception while rotating pictures." + str(err))
             return -1
-        return pic_names
+        return p_image_ids
 
     def prepare_cams(self):
         self.cam_driver.detect()

@@ -1,6 +1,19 @@
 from flask import abort, request, send_file, Response
+from flask_restful import Resource
 from librescan.api.app import app
-from librescan.services import ImageService
+from librescan.services import ImageService, ScannerService
+from librescan.utils import logger
+
+
+class ImagesController(Resource):
+    def __init__(self):
+        self.scanner_service = ScannerService()
+
+    def put(self, _id, image_id):
+        request_type = request.args.get('type', None)
+
+       if request_type == 'attributes':
+            pass
 
 
 @app.route('/api/projects/<p_project_id>/images/<p_image_id>')

@@ -10,6 +10,12 @@ class ImagesListController(Resource):
         self.scanner_service = ScannerService()
         self.image_service = ImageService()
 
+    def put(self, _id):
+        config.change_project(_id)
+        data = request.get_json()
+        picture_ids = self.scanner_service.take_pictures(-1, data['ids'])
+        return [ProjectPhoto(picture_id, _id) for picture_id in picture_ids]
+
     @marshal_with(ProjectPhoto.get_fields())
     def get(self, _id):
         return self.image_service.get_all(_id)
