@@ -1,4 +1,3 @@
-from os import getenv
 from os import mkdir
 from os import system
 from os.path import exists as f_checker
@@ -9,7 +8,11 @@ import yaml
 from .queue_service import QueueService
 from librescan.models import Project
 from librescan.config import config
-from librescan.utils import logger
+from librescan.utils import (
+    logger,
+    dict_from_yaml,
+    write_dict
+)
 
 
 class ProjectService:
@@ -29,6 +32,7 @@ class ProjectService:
 
         system("cp " + src + " " + destiny)
         system("touch " + config.pics_file_path())
+        system("touch " + config.pics_yaml_path())
         system("touch " + config.to_delete_pics_file_path())
 
         # Update project configuration
@@ -101,7 +105,7 @@ class ProjectService:
         data_map = yaml.safe_load(f)
         logger.info(data_map)
         f.close()
-        if p_project.cam_config is not None:
+        if p_project.cam_config:
             data_map['camera']['zoom'] = p_project.cam_config.zoom
             data_map['camera']['iso'] = p_project.cam_config.iso
 
@@ -152,15 +156,22 @@ class ProjectService:
         return available_langs
 
     @staticmethod
-    def get_project_last_pic(p_id):
-        config_path = getenv("HOME") + '/LibreScanProjects/' + p_id + '/.projectConfig.yaml'
-        f = open(config_path)
-        last_pic_number = yaml.safe_load(f)['camera']['last-pic-number']
-        f.close()
-        return last_pic_number
+    def last_pic_number():
+        config_path = config.project_config_file_path()
+        return dict_from_yaml(config_path)['camera']['last-pic-number']
 
-    def remove_file_pics(self, p_index=-1):
-        pics_file = self.working_dir + '/.pics.ls'
+    @staticmethod
+    def update_last_picture_id(p_pic_number):
+        config_path = config.project_config_file_path()
+        data_map = dict_from_yaml(config_path)
+
+        data_map['camera']['last-pic-number'] = p_pic_number
+
+        write_dict(config_path, data_map)
+
+    @staticmethod
+    def remove_file_pics(p_index=-1):
+        pics_file = config.pics_file_path()
         f = open(pics_file, "r")
         contents = f.readlines()
         f.close()

@@ -59,6 +59,13 @@ class Config(metaclass=Singleton):
     def get_project_path_with_id(cls, p_id):
         return f'{cls.get_projects_path()}/{p_id}'
 
+    @classmethod
+    def project_config_file_path_with_id(cls, p_id):
+        return f'{cls.get_projects_path()}/{p_id}/{LS_PROJECT_CONFIG_FILE}'
+
+    def pics_yaml_file_with_id(cls, p_id):
+        return f'{cls.get_projects_path()}/{p_id}{LS_PICS_YAML_FILE}'
+
     @staticmethod
     def projects_file_path():
         return LS_PROJECTS_FILE

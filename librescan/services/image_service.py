@@ -8,6 +8,7 @@ from PIL import Image
 from librescan.config import config
 from librescan.models import ProjectPhoto
 from librescan.utils import (
+    file_lines,
     dict_from_yaml,
     write_dict,
     logger
@@ -48,11 +49,36 @@ class ImageService:
         jpg_image = jpg_image.downscale(height, width)
         return jpg_image.as_blob()
 
-    @staticmethod
+    @classmethod
     def get_all(cls, p_project_id):
         config.change_project(p_project_id)
-        contents = cls.__file_content()
-        return [ProjectPhoto(image_id.rstrip(), p_project_id) for image_id in contents]
+        pics_file_path = config.pics_file_path()
+        contents = file_lines(pics_file_path)
+        return [cls.get_project_photo(p_project_id, image_id.rstrip()) for image_id in contents]
+
+    @staticmethod
+    def get_project_photo(p_project_id, p_image_id):
+        images_yaml = config.pics_yaml_file_with_id(p_project_id)
+        project_config_path = config.project_config_file_path_with_id(p_project_id)
+        project_data = dict_from_yaml(project_config_path)
+        images_data = dict_from_yaml(images_yaml)
+
+        images_data = images_data if images_data else dict()
+
+        image_data = images_data.get(p_image_id, dict())
+
+        image_default_config = project_data.get('scantailor', dict())
+
+        if project_data.get('scantailor', None):
+            if 'config' not in image_data or not image_data.get('config'):
+                image_data['config'] = dict()
+
+            # NOTE: Assuming attributes not deeper than one level
+            for k, v in image_default_config.items():
+                if k not in image_data['config']:
+                    image_data['config'][k] = v
+
+        return ProjectPhoto(p_image_id, p_project_id, image_data)
     
     @staticmethod
     def rotate_photos(p_left_photo, p_right_photo):
@@ -78,28 +104,37 @@ class ImageService:
                     raise Exception
             tries += 1
 
-    @staticmethod
-    # NOTE: There are many of this functions all over the project
-    # TODO: extract this to a file service or something similar
-    def __file_content():
-        pics_file = config.pics_file_path()
-        f = open(pics_file, "r")
-        contents = f.readlines()
-        f.close()
-        return contents
-
-    @staticmethod
-    def append_image_to_yaml(p_project_photo, p_config=None):
+    @classmethod
+    def append_image_to_yaml(cls, p_project_photo, p_config=None):
         yaml_path = config.pics_yaml_path()
 
-        data_map = dict_from_yaml(yaml_path)
+        photos_data = dict_from_yaml(yaml_path)
 
-        data_map[p_project_photo.id] = p_project_photo.to_dict()
+        photos_data = photos_data if photos_data else dict()
+
+        photo_file_data = photos_data.get(p_project_photo.id, dict())
+
+        photo_data = p_project_photo.to_dict()
+
+        print("----------------------------")
+        print(photo_data)
+        print()
+
+        # Merge memory object with (file object or new dic)
+        photo_data = cls.__merge_dic(photo_data, photo_file_data)
+
+        print(photo_data)
+        print()
 
         if p_config and isinstance(p_config, dict):
-            data_map[p_project_photo.id]['config'] = config
+            photo_data = cls.__merge_dic(photo_data, p_config)
+            print(photo_data)
+            print()
 
-        write_dict(yaml_path, data_map)
+        photos_data[p_project_photo.id] = photo_data
+        write_dict(yaml_path, photos_data)
+
+        return cls.get_project_photo(p_project_photo.project_id, p_project_photo.id)
 
     @staticmethod
     def mark_image_as_deleted(p_image_id):
@@ -122,15 +157,6 @@ class ImageService:
             file.writelines(contents)
 
         [cls.mark_image_as_deleted(_id) for _id in p_photo_list]
-
-    @staticmethod
-    def update_last_picture_id(cls, p_pic_number):
-        config_path = config.project_config_file_path()
-        data_map = dict_from_yaml(config_path)
-
-        data_map['camera']['last-pic-number'] = p_pic_number
-
-        write_dict(config_path, data_map)
 
     @classmethod
     def insert_pics(cls, p_index, pic_list):
@@ -161,3 +187,18 @@ class ImageService:
                 # TODO: take in count project layout (1 or 2 pages)
                 last_pics = contents[-2:]
             return last_pics
+
+    @classmethod
+    def __merge_dic(cls, original, update):
+        """
+        Recursively update a dict.
+        Subdict's won't be overwritten but also updated.
+        """
+        for key, value in original.items():
+            if not update:
+                return dict()
+            if key not in update:
+                update[key] = value
+            elif isinstance(value, dict):
+                cls.__merge_dic(value, update[key])
+        return update

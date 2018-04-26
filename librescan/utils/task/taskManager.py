@@ -14,6 +14,7 @@ class TaskManager:
     def process(self, p_photos):
         for photo in p_photos:
             tasks = self.__get_tasks(photo.project_id)
+            #  TODO: Use individual picture config
             params = {'input_dir': photo.working_dir, 'photo': photo.id}
             for task_instance in tasks:
                 task_instance.exec(params)
@@ -25,8 +26,8 @@ class TaskManager:
         configuration = cls.__get_configuration(project_path)
         tasks = []
         for task_name in configuration['general-info'].get('tasks', []):
-            class_ = getattr(task, to_capitalize(task_name))
-            tasks.append(class_(configuration.get(task_name, dict())))
+            _class = getattr(task, to_capitalize(task_name))
+            tasks.append(_class(configuration.get(task_name, dict())))
 
         return tasks
 

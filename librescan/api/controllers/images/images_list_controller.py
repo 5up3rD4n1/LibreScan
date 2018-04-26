@@ -25,4 +25,4 @@ class ImagesListController(Resource):
         config.change_project(_id)
         p_index = int(request.args.get('index', -1))
         picture_ids = self.scanner_service.take_pictures(p_index)
-        return [ProjectPhoto(picture_id, _id) for picture_id in picture_ids]
+        return [self.image_service.get_project_photo(_id, picture_id) for picture_id in picture_ids]

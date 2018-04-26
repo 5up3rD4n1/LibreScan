@@ -1,1 +1,2 @@
 from .images_list_controller import ImagesListController
+from .images_controller import ImagesController

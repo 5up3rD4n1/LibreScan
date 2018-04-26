@@ -1,19 +1,32 @@
 from flask import abort, request, send_file, Response
-from flask_restful import Resource
+from flask_restful import Resource, marshal_with
 from librescan.api.app import app
-from librescan.services import ImageService, ScannerService
+from librescan.models import ProjectPhoto
+from librescan.services import ImageService
 from librescan.utils import logger
+from librescan.config import config
 
 
 class ImagesController(Resource):
     def __init__(self):
-        self.scanner_service = ScannerService()
+        self.image_service = ImageService()
 
+    """
+        This method is intended to provide a valid way to modify a picture or its properties
+    """
+
+    # TODO: validate not permitted attributes like (id, project_id, working_dir)
+    @marshal_with(ProjectPhoto.get_fields())
     def put(self, _id, image_id):
+        config.change_project(_id)
+
         request_type = request.args.get('type', None)
 
         if request_type == 'attributes':
+            logger.info(image_id)
             logger.info(request.get_json())
+            photo = self.image_service.get_project_photo(_id, image_id)
+            return self.image_service.append_image_to_yaml(photo, request.get_json())
 
 
 @app.route('/api/projects/<p_project_id>/images/<p_image_id>')
