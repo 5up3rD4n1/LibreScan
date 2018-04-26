@@ -11,8 +11,11 @@ services:
       - "~/LibreScanProjects:/root/LibreScanProjects"
       - "~/.librescan:/root/.librescan"
       - "./librescan:/api/librescan"
+      - "/dev/bus/usb:/dev/bus/usb"
+
     environment:
       - FLASK_APP
       - FLASK_DEBUG
       - LS_DEV_MODE
     command: flask run -h 0.0.0.0 -p 8080
+    privileged: true
