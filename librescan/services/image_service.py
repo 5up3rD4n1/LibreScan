@@ -89,7 +89,7 @@ class ImageService:
         return contents
 
     @staticmethod
-    def append_image_to_yaml(cls, p_project_photo, p_config=None):
+    def append_image_to_yaml(p_project_photo, p_config=None):
         yaml_path = config.pics_yaml_path()
 
         data_map = dict_from_yaml(yaml_path)
@@ -102,13 +102,13 @@ class ImageService:
         write_dict(yaml_path, data_map)
 
     @staticmethod
-    def mark_image_as_deleted(cls, p_image_id):
+    def mark_image_as_deleted(p_image_id):
         yaml_path = config.pics_yaml_path()
         data_map = dict_from_yaml(yaml_path)
         data_map[p_image_id]['deleted'] = True
         write_dict(yaml_path, data_map)
 
-    @staticmethod
+    @classmethod
     def delete_photos(cls, p_photo_list):
         pics_file = config.pics_file_path()
         with open(pics_file, "r") as file:
@@ -132,7 +132,7 @@ class ImageService:
 
         write_dict(config_path, data_map)
 
-    @staticmethod
+    @classmethod
     def insert_pics(cls, p_index, pic_list):
         pics_file = config.pics_file_path()
         with open(pics_file, "r") as file:
@@ -158,6 +158,6 @@ class ImageService:
 
             last_pics = []
             if len(contents) > 1:
-                # TODO: take in count project layout(1 or 2 pages)
+                # TODO: take in count project layout (1 or 2 pages)
                 last_pics = contents[-2:]
             return last_pics
