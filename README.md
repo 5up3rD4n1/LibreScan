@@ -5,11 +5,13 @@ Es **necesario** tener instalado `docker` y `docker-compose v3`
 
 - Primero se debe clonar el repositorio
 - Exportar las siguentes variables:
+
 ```sh
 export LS_DEV_MODE=True
 export FLASK_APP=/api/librescan/api/app.py
 export FLASK_DEBUG=1
 ```
+
 - Correr el contenedor
 
 		$ docker-compose up
