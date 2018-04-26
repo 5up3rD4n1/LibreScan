@@ -1,15 +1,15 @@
 import re
-from subprocess import check_output
+
 from time import sleep
 from pexpect import spawn as shell
-from ..cameraDriver import CameraDriver
+from librescan.utils.camera import CameraDriver
 
 
 class ChdkptpPT(CameraDriver):
     def __init__(self):
         self.cams = {}
 
-    def detect(self):
+    def detect(self, params):
         cameras = self.devices_list()
         for cam_info in cameras:
             self.connect(cam_info)
@@ -17,9 +17,15 @@ class ChdkptpPT(CameraDriver):
     def prepare(self, p_cam_config):
         zoom = p_cam_config.zoom
         self.rec_mode()
-        # self.set_quality()
+        self.set_quality()
         self.set_zoom(zoom)
         self.calibrate()
+
+    def swap(self):
+        cams = dict()
+        cams['right'] = self.cams['left']
+        cams['left'] = self.cams['right']
+        self.cams = cams
 
     def set_zoom(self, p_zoom_level):
         zoom = p_zoom_level
@@ -63,7 +69,7 @@ class ChdkptpPT(CameraDriver):
         cams['left'].sendline('remoteshoot {0}{1} -tv=1/25 -sv={2}'.format(p_save_path, p_pic_names[1], str(80)))
         self._cameras_wait()
 
-    def connect(self, p_cam_info):
+    def connect(self, p_orientation, p_cam_info):
         cam = shell('chdkptp')
 
         expression = r"(?P<bus>b=[0-9]+) (?P<dev>d=[0-9]+)"
@@ -74,13 +80,11 @@ class ChdkptpPT(CameraDriver):
 
         # Command connect to camera example: connect -b=001 -d=003
         cam.sendline('connect -{0} -{1}'.format(bus, dev))
-        cam.sendline('download orientation.txt /tmp/')
-        cam.expect('A/.*', timeout=5)
 
-        orientation = check_output('cat /tmp/orientation.txt', shell=True).decode().strip()
-        self.cams[orientation] = cam
+        self.cams[p_orientation] = cam
 
     # Figure out why is affecting a2200
+    # Make sure to have chdk full version running on the camera
     def set_quality(self):
         cams = self.cams
         command = ("luar props=require('propcase'); "

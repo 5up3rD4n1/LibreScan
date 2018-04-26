@@ -12,8 +12,8 @@ class ImagesController(Resource):
     def put(self, _id, image_id):
         request_type = request.args.get('type', None)
 
-       if request_type == 'attributes':
-            pass
+        if request_type == 'attributes':
+            logger.info(request.get_json())
 
 
 @app.route('/api/projects/<p_project_id>/images/<p_image_id>')
@@ -53,5 +53,3 @@ def get_tif(p_project_id, p_image_id):
         abort(404, f'File Not Found: {str(err)}')
     except (TypeError, ValueError) as err:
         abort(400, f'Error: height and width parameter must be integers; {str(err)}')
-
-

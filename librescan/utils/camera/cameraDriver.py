@@ -1,8 +1,13 @@
 
 from abc import ABCMeta, abstractmethod
+from librescan.patterns import Singleton
 
 
-class CameraDriver(metaclass=ABCMeta):
+class CameraDriverBase(ABCMeta, Singleton):
+    pass
+
+
+class CameraDriver(metaclass=CameraDriverBase):
 
     @abstractmethod
     def detect(self, params):
