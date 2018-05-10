@@ -1,0 +1,130 @@
+project:
+  name:
+    type: string
+  description:
+    type: string
+scantailor:
+  layout:
+    type: select
+    options:
+      - 0
+      - 1
+      - 1.5
+      - 2
+    default: 0
+  layout-direction:
+    type: select
+    options:
+      - ld
+      - rl
+    default: lr
+  orientation:
+    type: select
+    options:
+      - left
+      - right
+      - upsidedown
+      - none
+    default: none
+  rotate:
+    type: range
+    min: 0.0
+    max: 360.0
+    steps: 0.1
+  deskew:
+    type: select
+    options:
+      - auto
+      - manual
+    default: auto
+  content-detection:
+    type: select
+    options:
+      - cautious
+      - normal
+      - aggressive
+    default: normal
+  content-box:
+    type: string
+  margins-left:
+    type: numeric
+  margins-right:
+    type: numeric
+  margins-top:
+    type: numeric
+  margins-bottom:
+    type: numeric
+  alignment-vertical:
+    type: select
+    options:
+    - top
+    - center
+    - bottom
+  alignment-horizontal:
+    type: select
+    options:
+    - left
+    - center
+    - right
+  dpi-x:
+    type: numeric
+    default: 600
+  dpi-y:
+    type: numeric
+    default: 600
+  output-dpi-x:
+    type: numeric
+  output-dpi-y:
+    type: numeric
+  color-mode:
+    type: select
+    options:
+      - black_and_white
+      - color_grayscale
+      - mixed
+    default: black_and_white
+  white-margings:
+    type: boolean
+  normalize-ilumination:
+    type: boolean
+  threshold:
+    type: range
+    min: 0
+    max: 1
+    steps: 0.1
+    default: 0
+  despeckle:
+    type: select
+    options:
+      - off
+      - cautious
+      - normal
+      - aggressive
+	default: normal
+  dewarping:
+    type: select
+    options:
+      - "off"
+      - auto
+    default: "off"
+  depth-perception:
+    type: range
+    min: 1.0
+    max: 3.0
+    steps: 0.1
+    default: 2.0
+  start-filter:
+    type: range
+    min: 1
+    max: 6
+    steps: 1
+    default: 4
+  end-filter:
+   type: range
+   min: 1
+   max: 6
+   steps: 1
+   default: 6
+teseract:
+  language:
+    type: string
