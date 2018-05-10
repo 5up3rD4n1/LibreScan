@@ -3,16 +3,18 @@
 import os
 import yaml
 from shutil import copyfile
-from setuptools import setup, find_packages
+import logging
+
 # from api.i18n.PoParser import PoParser
 
-from librescan.utils import logger
 
 USERHOME = os.environ["HOME"]
 RESOURCESPATH = './config'
 LIBRESCANPATH = USERHOME + "/LibreScanProjects"
 LSCONFIGPATH = USERHOME + "/.librescan"
 
+logging.basicConfig(format='%(asctime) - s %(levelname)s %(message)s', level=logging.DEBUG)
+logger = logging.getLogger(__file__)
 
 def create_folders():
     try:
@@ -31,7 +33,7 @@ def create_config_files():
     project_template = RESOURCESPATH + default_config_file
     copyfile(project_template, LSCONFIGPATH + default_config_file)
 
-    forms_metadata_file = "formsMetadata.yaml"
+    forms_metadata_file = "/formsMetadata.yaml"
     project_template = RESOURCESPATH + forms_metadata_file
     copyfile(project_template, LSCONFIGPATH + forms_metadata_file)
 

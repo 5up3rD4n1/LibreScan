@@ -7,6 +7,7 @@ LS_HOME_DIR = getenv("HOME")
 LS_CONFIG_PATH = f'{LS_HOME_DIR}/.librescan'
 LS_PROJECTS_FILE = f'{LS_CONFIG_PATH}/projects.yaml'
 LS_CONFIG_FILE = f'{LS_CONFIG_PATH}/config.yaml'
+LS_FORMS_FILE = f'{LS_CONFIG_PATH}/formsMetadata.yaml'
 LS_PROJECT_CONFIG_FILE = '/.projectConfig.yaml'
 LS_DELETE_PICS_FILE = '/.toDelete.ls'
 LS_PROCESSED_PATH = '/processed'
@@ -26,6 +27,7 @@ class Config(metaclass=Singleton):
             self.project_id = p_id
         self.config_folder = LS_CONFIG_PATH
         self.config_file_path = LS_CONFIG_FILE
+        self.forms_metadata = LS_FORMS_FILE
         self.projects_path = self.get_projects_path()
         self.project_folder = f'{self.projects_path}/{self.project_id}'
         self.output_name = LS_OUTPUT_NAME
@@ -54,6 +56,9 @@ class Config(metaclass=Singleton):
 
     def get_config_folder(self):
         return self.config_folder
+
+    def get_forms_metadata_path(self):
+        return self.forms_metadata
 
     @classmethod
     def get_project_path_with_id(cls, p_id):
