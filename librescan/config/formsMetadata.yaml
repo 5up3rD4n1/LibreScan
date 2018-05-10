@@ -100,7 +100,7 @@ scantailor:
       - cautious
       - normal
       - aggressive
-	default: normal
+    default: normal
   dewarping:
     type: select
     options:
