@@ -12,7 +12,6 @@ services:
       - "~/.librescan:/root/.librescan"
       - "./librescan:/api/librescan"
       - "/dev/bus/usb:/dev/bus/usb"
-
     environment:
       - FLASK_APP
       - FLASK_DEBUG

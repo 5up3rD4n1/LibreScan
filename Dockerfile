@@ -2,7 +2,6 @@ FROM labexperimental/debian:jessie
 
 MAINTAINER LabExperimental <librescan@gmail.com>
 
-
 VOLUME /root/LibreScanProjects
 
 VOLUME /root/.librescan
