@@ -18,7 +18,7 @@ of information send to the server for each form and inputs defined here.
 
 ### The format
 
-There is no protocol or standard to do this, we define a convenient way to define the forms metadata.
+There is no protocol or standard to do this, we defined a convenient way to describe the forms metadata.
 
 This describes the inputs of the project, so the interface
 can dynamically render the input with its default value
@@ -26,7 +26,7 @@ can dynamically render the input with its default value
 The structure consists in the form name and the children are the inputs.
  Each input can contain attributes like:
         
-    type: <string | numeric | range |select | boolean>
+    type: <string | numeric | range | select | boolean>
     
  - If `type` is `select` you can add extra parameters like:
     - `options`: list of available options
@@ -55,6 +55,6 @@ The structure consists in the form name and the children are the inputs.
           steps: 0.1
           default: 2.0
  - If type is `string` you can optionally provide a `default` value.
- - If type is `numeric` you can provide a default value.
- - If type is `boolean` you can provide a default value, if not `false` will be the `default`.
+ - If type is `numeric` you can optionally provide a `default` value.
+ - If type is `boolean` you can optionally provide a `default` value, if not `false` will be the `default`.
   
