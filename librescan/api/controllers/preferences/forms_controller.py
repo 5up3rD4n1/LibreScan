@@ -6,7 +6,8 @@ from librescan.config import config
 
 class FormsController(Resource):
 
-    def get(self):
+    @staticmethod
+    def get():
         form_name = request.args.get('form', None)
 
         data_map = dict_from_yaml(config.get_forms_metadata_path())
@@ -17,5 +18,11 @@ class FormsController(Resource):
             return response
 
         data_map = data_map if not form_name else data_map[form_name]
+
+        if form_name:
+            data_map['order'] = list(data_map.keys())
+        else:
+            for key, value in data_map.items():
+                data_map[key]['order'] = list(value.keys())
 
         return jsonify(data_map)
